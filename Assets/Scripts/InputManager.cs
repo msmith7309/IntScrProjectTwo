@@ -20,6 +20,7 @@ public class InputManager : MonoBehaviour
         var mouse = Mouse.current;
         if(mouse == null) return;
 
+
         if(mouse.leftButton.wasPressedThisFrame)
         {
             if(debug) Debug.Log("Left Mouse Button was pressed this frame.");
@@ -27,6 +28,21 @@ public class InputManager : MonoBehaviour
             if(gun != null)
             {
                 gun.Fire();
+            }
+        }
+
+        var keyboard = Keyboard.current;
+        if(keyboard == null) return;
+
+        if(keyboard.rKey.wasPressedThisFrame)
+        {
+            if(gun != null)
+            {
+                if(gun.clip != gun.clipSize)
+                {
+                    gun.Reload();
+                }
+                
             }
         }
     }
