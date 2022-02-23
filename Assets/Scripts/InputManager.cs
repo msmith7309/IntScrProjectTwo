@@ -9,8 +9,6 @@ public class InputManager : MonoBehaviour
 
     public bool debug = true;
 
-    public bool waiting = false;
-
     // Start is called before the first frame update
     void Start()
     {
@@ -36,29 +34,16 @@ public class InputManager : MonoBehaviour
                 
             }
         }
-    }
 
-    
-    public void Fire(InputAction.CallbackContext context)
-    {
-        if(debug) Debug.Log("Left Mouse Button was held this frame.");
-        //skip curly braces only one line
-        if(gun != null)
+        if(mouse.leftButton.isPressed)
         {
-            StartCoroutine(Wait());
-            if(!waiting)
+            if(debug) Debug.Log("Left Mouse Button was held this frame.");
+            //skip curly braces only one line
+            if(gun != null)
             {
                 gun.Fire();
-            }
-            
-        }
-    }
 
-    IEnumerator Wait()
-    {
-        waiting = true;
-        yield return new WaitForSeconds(0.1f);
-        waiting = false; 
-        Debug.Log("Firing is finished running again");
+            }
+        }
     }
 }

@@ -10,6 +10,8 @@ public class GunScript : MonoBehaviour
 
     public Transform bulletSpawn; 
 
+    public bool canShoot = true;
+
 
     //private variables
 
@@ -17,6 +19,8 @@ public class GunScript : MonoBehaviour
 
     public int clipSize = 10;
     public int clip = 0;
+
+    public float fireRate = 0.1f;
 
     //attributes, google it later.
     [Range (10, 100)]
@@ -55,20 +59,31 @@ public class GunScript : MonoBehaviour
 
     public void Fire()
     {
-        if(clip > 0)
+        if(canShoot)
         {
-            clip -= 1;
-            if(debug) Debug.Log("PEW!");
-            //Create bullet prefab copy
-            Rigidbody bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
-            bullet.AddRelativeForce(Vector3.forward * bulletSpeed, ForceMode.Impulse);
+            if(clip > 0)
+            {
+                clip -= 1;
+                if(debug) Debug.Log("PEW!");
+                //Create bullet prefab copy
+                Rigidbody bullet = Instantiate(bulletPrefab, bulletSpawn.position, bulletSpawn.rotation);
+                bullet.AddRelativeForce(Vector3.forward * bulletSpeed, ForceMode.Impulse);
+
+                StartCoroutine(CoolDown());
+            }
+            else if(clip <= 0)
+            {
+                clip = 0;
+                Debug.Log("Out of Ammo :(");
+            }
         }
-        else if(clip <= 0)
-        {
-            clip = 0;
-            Debug.Log("Out of Ammo :(");
-        }
+        
     }
 
-
+    IEnumerator CoolDown()
+    {
+        canShoot = false;
+        yield return new WaitForSeconds(fireRate);
+        canShoot = true;
+    }
 }
