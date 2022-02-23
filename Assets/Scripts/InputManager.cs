@@ -7,7 +7,9 @@ public class InputManager : MonoBehaviour
 {
     public GunScript gun;
 
-    public bool debug = false;
+    public bool debug = true;
+
+    public bool waiting = false;
 
     // Start is called before the first frame update
     void Start()
@@ -19,17 +21,6 @@ public class InputManager : MonoBehaviour
     {
         var mouse = Mouse.current;
         if(mouse == null) return;
-
-
-        if(mouse.leftButton.wasPressedThisFrame)
-        {
-            if(debug) Debug.Log("Left Mouse Button was pressed this frame.");
-            //skip curly braces only one line
-            if(gun != null)
-            {
-                gun.Fire();
-            }
-        }
 
         var keyboard = Keyboard.current;
         if(keyboard == null) return;
@@ -45,5 +36,29 @@ public class InputManager : MonoBehaviour
                 
             }
         }
+    }
+
+    
+    public void Fire(InputAction.CallbackContext context)
+    {
+        if(debug) Debug.Log("Left Mouse Button was held this frame.");
+        //skip curly braces only one line
+        if(gun != null)
+        {
+            StartCoroutine(Wait());
+            if(!waiting)
+            {
+                gun.Fire();
+            }
+            
+        }
+    }
+
+    IEnumerator Wait()
+    {
+        waiting = true;
+        yield return new WaitForSeconds(0.1f);
+        waiting = false; 
+        Debug.Log("Firing is finished running again");
     }
 }
