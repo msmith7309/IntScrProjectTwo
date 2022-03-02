@@ -20,14 +20,14 @@ public class PlayerTransportScript : MonoBehaviour
     void Update()
     {
 
-        if(enemyIsSeen)
-        {
-            enemy.SetActive(true);
-        }
-        else if(!enemyIsSeen)
-        {
-            enemy.SetActive(false);
-        }
+        //if(enemyIsSeen)
+        //{
+        //    enemy.SetActive(true);
+        //}
+        //else if(!enemyIsSeen)
+        //{
+        //    enemy.SetActive(false);
+        //}
         
     }
 
@@ -37,10 +37,10 @@ public class PlayerTransportScript : MonoBehaviour
         {
             playerPos = this.transform.position;
             Debug.Log("Should be disappeared");
-            if(enemyIsSeen)
-            {
-                enemyIsSeen = false;
-            }
+            //if(enemyIsSeen)
+            //{
+            //    enemyIsSeen = false;
+            //}
         }
 
         if(other.gameObject.CompareTag("Kills you"))
@@ -51,7 +51,7 @@ public class PlayerTransportScript : MonoBehaviour
         if(other.gameObject.CompareTag("Falling Platform"))
         {
             Debug.Log("Should be seen");
-            enemyIsSeen = true;
+            //enemyIsSeen = true;
             
         }
     }

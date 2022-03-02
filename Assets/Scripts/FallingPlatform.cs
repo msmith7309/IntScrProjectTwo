@@ -26,6 +26,9 @@ public class FallingPlatform : MonoBehaviour
 
     public Animator anim;
 
+    public Color startColor, waitColor, fallColor;
+    Renderer rend;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -33,6 +36,10 @@ public class FallingPlatform : MonoBehaviour
         startRot = this.transform.rotation;
         startPos = this.transform.position;
         anim = this.GetComponent<Animator>();
+        rend = this.GetComponent<Renderer>();
+        startColor = rend.material.color;
+        waitColor = Color.red;
+        fallColor = Color.white;
 
     }
 
@@ -69,7 +76,9 @@ public class FallingPlatform : MonoBehaviour
     IEnumerator WaitToFall()
     {
         anim.SetBool("Shaking", true);
+        rend.material.color = waitColor;
         yield return new WaitForSeconds (hangTime);
+        rend.material.color = fallColor;
         anim.SetBool("Shaking", false);
         rb.isKinematic = false;
         StartCoroutine(Reset());
@@ -79,6 +88,7 @@ public class FallingPlatform : MonoBehaviour
     IEnumerator Reset()
     {
         yield return new WaitForSeconds (resetTimer);
+        rend.material.color = waitColor;
         rb.isKinematic = true;
         
         Vector3 pointA = this.transform.position;
@@ -91,6 +101,7 @@ public class FallingPlatform : MonoBehaviour
 
         while(timer < 1)
         {
+            rend.material.color = Color.Lerp(waitColor, startColor, curve.Evaluate(timer));
             this.transform.rotation = Quaternion.Lerp(rotA, rotB, curve.Evaluate(timer));
             this.transform.position = Vector3.Lerp(pointA, pointB, curve.Evaluate(timer));
             timer += Time.deltaTime / resetInterval;
@@ -98,6 +109,7 @@ public class FallingPlatform : MonoBehaviour
         }
         this.transform.position = startPos;
         this.transform.rotation = startRot;
+        rend.material.color = startColor;
 
         platformIsActive = false;
     }

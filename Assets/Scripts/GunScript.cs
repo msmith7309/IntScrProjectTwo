@@ -4,23 +4,32 @@ using UnityEngine;
 
 public class GunScript : MonoBehaviour
 {
-    public bool debug = false;
 
     public Rigidbody bulletPrefab;
 
     public Transform bulletSpawn; 
 
+    [Header("Bools")]
     public bool canShoot = true;
+    public bool debug = false;
 
-
-    //private variables
-
+    [Header("Ammo Management")]
     public int totalAmmo = 90;
-
     public int clipSize = 10;
     public int clip = 0;
 
     public float fireRate = 0.1f;
+
+    [Header("Audio")]
+    public AudioClip fire;
+    public AudioClip reload;
+    public AudioClip getAmmo;
+
+
+    //private variables
+
+    private AudioSource aud;
+    
 
     //attributes, google it later.
     [Range (10, 100)]
@@ -29,7 +38,7 @@ public class GunScript : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        aud = this.gameObject.GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -48,6 +57,7 @@ public class GunScript : MonoBehaviour
 
         if(totalAmmo + clip >= clipSize)
         {
+            aud.PlayOneShot(reload);
             totalAmmo -= (clipSize - clip);
             clip = clipSize;
         }
@@ -63,6 +73,8 @@ public class GunScript : MonoBehaviour
         {
             if(clip > 0)
             {
+                aud.pitch = Random.Range(0.75f, 1.25f);
+                aud.PlayOneShot(fire);
                 clip -= 1;
                 if(debug) Debug.Log("PEW!");
                 //Create bullet prefab copy
@@ -78,6 +90,12 @@ public class GunScript : MonoBehaviour
             }
         }
         
+    }
+
+    public void GetAmmo()
+    {
+        totalAmmo += 90;
+        aud.PlayOneShot(getAmmo);
     }
 
     IEnumerator CoolDown()
