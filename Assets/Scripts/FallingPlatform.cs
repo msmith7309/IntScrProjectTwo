@@ -24,14 +24,15 @@ public class FallingPlatform : MonoBehaviour
 
     public bool randomize = true;
 
+    public Animator anim;
+
     // Start is called before the first frame update
     void Start()
     {
-        Randomize();
-
         rb = this.GetComponent<Rigidbody>();
         startRot = this.transform.rotation;
-
+        startPos = this.transform.position;
+        anim = this.GetComponent<Animator>();
 
     }
 
@@ -45,15 +46,13 @@ public class FallingPlatform : MonoBehaviour
     {
         if(other.gameObject.CompareTag("Player"))
         {
+            Debug.Log(other.name + " has run into us");
             if(!platformIsActive)
             {
                 platformIsActive = true;
-                Debug.Log(other.name + " has run into us");
                 StartCoroutine(WaitToFall()); 
             }
-            
         }
-        
     }
 
     void Randomize()
@@ -61,7 +60,6 @@ public class FallingPlatform : MonoBehaviour
         if(randomize)
         {
             this.transform.Translate(Random.value - 0.5f, Random.value - 0.5f, Random.value - 0.5f);
-            startPos = this.transform.position;
             resetInterval += Random.Range(-resetInterval/3, resetInterval/3);
             hangTime += Random.Range(-hangTime/3, hangTime/3);
             resetTimer += Random.Range(-resetTimer/3, resetTimer/3);
@@ -70,7 +68,9 @@ public class FallingPlatform : MonoBehaviour
 
     IEnumerator WaitToFall()
     {
+        anim.SetBool("Shaking", true);
         yield return new WaitForSeconds (hangTime);
+        anim.SetBool("Shaking", false);
         rb.isKinematic = false;
         StartCoroutine(Reset());
         
@@ -98,8 +98,6 @@ public class FallingPlatform : MonoBehaviour
         }
         this.transform.position = startPos;
         this.transform.rotation = startRot;
-
-        Randomize();
 
         platformIsActive = false;
     }
