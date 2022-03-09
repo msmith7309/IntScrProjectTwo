@@ -12,7 +12,15 @@ public class HealthScript : MonoBehaviour
     public bool isObject = false;
 
     public AudioClip death;
+    public AudioClip hit;
     private AudioSource aud;
+
+    public Vector3 maxScale;
+    public Vector3 minScale;
+
+    public float timeElapsed = 0;
+    public float timer = 3;
+    private float TimeScale = 0.5f;
 
     //todo randomize starting health
     // regnerate halth for enemies and player
@@ -22,6 +30,7 @@ public class HealthScript : MonoBehaviour
     {
         aud = this.gameObject.GetComponent<AudioSource>();
         aud.spatialBlend = 1;
+        maxScale = this.transform.localScale;
     }
 
     void OnCollisionEnter(Collision other)
@@ -39,6 +48,11 @@ public class HealthScript : MonoBehaviour
             //let the bullet define that
 
             health -= other.gameObject.GetComponent<BulletScript>().damage;
+            if(!isObject)
+            {
+                aud.PlayOneShot(hit);
+            }
+            
 
             if(health <= 0)
             {
@@ -49,6 +63,7 @@ public class HealthScript : MonoBehaviour
 
     void Death()
     {
+        aud.PlayOneShot(death);
         if(isObject)
         {
             Destroy(this.GetComponent<Collider>());
@@ -81,9 +96,22 @@ public class HealthScript : MonoBehaviour
         }
         else
         {
-            aud.PlayOneShot(death);
-            this.gameObject.AddComponent<Rigidbody>();
-            Destroy(this.gameObject, 5);
+            StartCoroutine(Timer());
+        }
+    }
+
+    IEnumerator Timer()
+    {
+        float progress = 0;
+        while(timeElapsed < 3f)
+        {
+            transform.localScale = Vector3.Lerp(maxScale, minScale, progress);
+            progress += Time.deltaTime * TimeScale;
+            yield return null;
+        }
+        if(timeElapsed >= 3f)
+        {
+            Destroy(this.gameObject);
         }
     }
 }

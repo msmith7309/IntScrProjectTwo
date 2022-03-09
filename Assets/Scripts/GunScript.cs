@@ -24,6 +24,8 @@ public class GunScript : MonoBehaviour
     public AudioClip fire;
     public AudioClip reload;
     public AudioClip getAmmo;
+    public AudioClip outOfAmmo;
+    public AudioClip noAmmo;
 
 
     //private variables
@@ -64,6 +66,7 @@ public class GunScript : MonoBehaviour
         else{
             clip = totalAmmo + clip;
             totalAmmo = 0;
+            aud.PlayOneShot(outOfAmmo);
         }
     }
 
@@ -73,7 +76,6 @@ public class GunScript : MonoBehaviour
         {
             if(clip > 0)
             {
-                aud.pitch = Random.Range(0.75f, 1.25f);
                 aud.PlayOneShot(fire);
                 clip -= 1;
                 if(debug) Debug.Log("PEW!");

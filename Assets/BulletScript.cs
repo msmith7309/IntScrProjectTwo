@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BulletScript : MonoBehaviour
 {
-    public int damage = 2;
+    public int damage = 5;
 
     public int doesDouble = 0;
 
