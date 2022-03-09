@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class HealthScript : MonoBehaviour
 {
+    enum healthType {Player, Enemy, Object};
+    
+    [SerializeField]
+    healthType hType = healthType.Object;
+
     public int health = 100;
 
     public int numberOfParts;
 
-    [Tooltip("Check this box if this object is just an object (like a crate), not an enemy")]
-    public bool isObject = false;
+    //[Tooltip("Check this box if this object is just an object (like a crate), not an enemy")]
+    //public bool isObject = false;
 
     public AudioClip death;
     public AudioClip hit;
@@ -22,6 +27,8 @@ public class HealthScript : MonoBehaviour
     public float timer = 3;
     private float TimeScale = 0.5f;
 
+    private bool isDying = false;
+
     //todo randomize starting health
     // regnerate halth for enemies and player
     //for objects, break into smaller pices upon death
@@ -31,6 +38,18 @@ public class HealthScript : MonoBehaviour
         aud = this.gameObject.GetComponent<AudioSource>();
         aud.spatialBlend = 1;
         maxScale = this.transform.localScale;
+    }
+
+    void Update()
+    {
+        if(health <= 0 && !isDying)
+        {
+            Death();
+        }
+        if(hType == healthType.Player)
+        {
+            UIManager.playerHealthText.text = "Health: " + health.ToString();
+        }
     }
 
     void OnCollisionEnter(Collision other)
@@ -48,23 +67,21 @@ public class HealthScript : MonoBehaviour
             //let the bullet define that
 
             health -= other.gameObject.GetComponent<BulletScript>().damage;
-            if(!isObject)
+            if(hType == healthType.Enemy)
             {
                 aud.PlayOneShot(hit);
             }
+        }
             
 
-            if(health <= 0)
-            {
-                Death();
-            }
-        }
+        
     }
 
     void Death()
     {
+        isDying = true;
         aud.PlayOneShot(death);
-        if(isObject)
+        if(hType == healthType.Object)
         {
             Destroy(this.GetComponent<Collider>());
             //change the number of parts based on the size of the object //DONE!
@@ -94,24 +111,44 @@ public class HealthScript : MonoBehaviour
                 part.AddComponent<Rigidbody>();
             }
         }
-        else
+        else if(hType == healthType.Enemy)
         {
-            StartCoroutine(Timer());
+            StartCoroutine(GetSmallAndDie());
+        }
+
+        else if(hType == healthType.Player)
+        {
+            Application.LoadLevel(0);
         }
     }
 
-    IEnumerator Timer()
+    //IEnumerator Timer()
+    //{
+    //    float progress = 0;
+    //    while(timeElapsed < 3f)
+    //    {
+    //        transform.localScale = Vector3.Lerp(maxScale, minScale, progress);
+    //        progress += Time.deltaTime * TimeScale;
+    //        yield return null;
+    //    }
+    //    if(timeElapsed >= 3f)
+    //    {
+    //        Destroy(this.gameObject);
+    //    }
+    //}
+
+    IEnumerator GetSmallAndDie()
     {
-        float progress = 0;
-        while(timeElapsed < 3f)
+        float time = 4;
+        float ObjStartSize = this.transform.localScale.y;
+        float objectSize = this.transform.localScale.y;
+
+        while(objectSize > 0.1f)
         {
-            transform.localScale = Vector3.Lerp(maxScale, minScale, progress);
-            progress += Time.deltaTime * TimeScale;
-            yield return null;
+            this.transform.localScale -= Vector3.one * (ObjStartSize / time) * Time.deltaTime;
+            yield return new WaitForEndOfFrame();
+            objectSize = this.transform.localScale.y;
         }
-        if(timeElapsed >= 3f)
-        {
-            Destroy(this.gameObject);
-        }
+        Destroy(this.gameObject);
     }
 }

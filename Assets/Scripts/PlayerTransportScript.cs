@@ -45,7 +45,7 @@ public class PlayerTransportScript : MonoBehaviour
 
         if(other.gameObject.CompareTag("Kills you"))
         {
-            this.transform.position = playerPos;
+            Application.LoadLevel(0);
             Debug.Log("Should be dead");
         }
         if(other.gameObject.CompareTag("Falling Platform"))

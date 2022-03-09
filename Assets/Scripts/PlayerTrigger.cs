@@ -31,4 +31,8 @@ public class PlayerTrigger : MonoBehaviour
             gun.GetAmmo();
         }
     }
+
+    //after ontriggerenter?
+    //ontriggerstay 
+    //do damage every three seconds for each enemy touching 
 }

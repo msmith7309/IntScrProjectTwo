@@ -46,7 +46,7 @@ public class GunScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        UIManager.ammoText.text = "Ammo: " + clip + "/" + totalAmmo.ToString();
     }
 
     public void Reload()
